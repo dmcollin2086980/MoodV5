@@ -1,5 +1,78 @@
 import SwiftUI
-import ComponentStyles
+
+// MARK: - Component Styles
+// MARK: - Color Constants
+extension Color {
+    static let systemBackground = Color(.systemBackground)
+    static let secondaryText = Color.secondary
+    static let cardBackground = Color(.systemBackground)
+    
+    static let positive = Color.green
+    static let negative = Color.red
+    static let neutral = Color.yellow
+    
+    static let patternCardBackground = Color.blue.opacity(0.1)
+    static let weeklyPatternCardBackground = Color.green.opacity(0.1)
+    static let goalImpactCardBackground = Color.purple.opacity(0.1)
+}
+
+// MARK: - Font Constants
+extension Font {
+    static let headline = Font.headline
+    static let subheadline = Font.subheadline
+    static let body = Font.body
+    static let caption = Font.caption
+    static let title2 = Font.title2
+}
+
+// MARK: - Spacing Constants
+extension CGFloat {
+    static let spacingSmall: CGFloat = 5
+    static let spacingMedium: CGFloat = 8
+    static let spacingLarge: CGFloat = 12
+    static let spacingExtraLarge: CGFloat = 16
+}
+
+// MARK: - View Modifiers
+struct CardStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .padding(.spacingLarge)
+            .background(Color.cardBackground)
+            .cornerRadius(12)
+            .shadow(radius: 2)
+    }
+}
+
+struct CardContentStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .padding(.spacingMedium)
+    }
+}
+
+struct MoodImpactColor: ViewModifier {
+    let value: Double
+    
+    func body(content: Content) -> some View {
+        content
+            .foregroundColor(value >= 4.0 ? .positive : value >= 3.0 ? .neutral : .negative)
+    }
+}
+
+extension View {
+    func cardStyle() -> some View {
+        modifier(CardStyle())
+    }
+    
+    func cardContentStyle() -> some View {
+        modifier(CardContentStyle())
+    }
+    
+    func moodImpactColor(value: Double) -> some View {
+        modifier(MoodImpactColor(value: value))
+    }
+}
 
 // MARK: - Loading View
 struct LoadingView: View {
@@ -102,9 +175,9 @@ struct EmptyStateView: View {
     }
 }
 
-// MARK: - Shared Components
+// MARK: - Card Components
 
-// MARK: - Pattern Card
+// MARK: - Pattern Cards
 struct PatternCard: View {
     let pattern: WeeklyReport.PatternAnalysis.RecurringPattern
     
@@ -127,7 +200,6 @@ struct PatternCard: View {
     }
 }
 
-// MARK: - Weekly Pattern Card
 struct WeeklyPatternCard: View {
     let pattern: WeeklyReport.PatternAnalysis.WeeklyPattern
     
@@ -162,7 +234,7 @@ struct WeeklyPatternCard: View {
     }
 }
 
-// MARK: - Insight Row
+// MARK: - Row Components
 struct InsightRow: View {
     let text: String
     
@@ -177,7 +249,6 @@ struct InsightRow: View {
     }
 }
 
-// MARK: - Recommendation Row
 struct RecommendationRow: View {
     let text: String
     
@@ -192,35 +263,7 @@ struct RecommendationRow: View {
     }
 }
 
-// MARK: - Time of Day Card
-struct TimeOfDayCard: View {
-    let title: String
-    let average: Double
-    let isBest: Bool
-    
-    var body: some View {
-        VStack {
-            Text(title)
-                .font(.subheadline)
-                .foregroundColor(.secondaryText)
-            
-            Text(String(format: "%.1f", average))
-                .font(.title2)
-                .foregroundColor(.moodImpactColor(value: average))
-            
-            if isBest {
-                Image(systemName: "star.fill")
-                    .foregroundColor(.yellow)
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.spacingMedium)
-        .background(.cardBackground)
-        .cornerRadius(12)
-    }
-}
-
-// MARK: - Goal Progress Row
+// MARK: - Goal Components
 struct GoalProgressRow: View {
     let progress: WeeklyReport.GoalProgress
     
@@ -254,7 +297,6 @@ struct GoalProgressRow: View {
     }
 }
 
-// MARK: - Goal Impact Card
 struct GoalImpactCard: View {
     let correlation: WeeklyReport.PatternAnalysis.GoalMoodCorrelation
     
@@ -274,6 +316,34 @@ struct GoalImpactCard: View {
         .padding(.spacingMedium)
         .background(.goalImpactCardBackground)
         .cornerRadius(8)
+    }
+}
+
+// MARK: - Time Components
+struct TimeOfDayCard: View {
+    let title: String
+    let average: Double
+    let isBest: Bool
+    
+    var body: some View {
+        VStack {
+            Text(title)
+                .font(.subheadline)
+                .foregroundColor(.secondaryText)
+            
+            Text(String(format: "%.1f", average))
+                .font(.title2)
+                .foregroundColor(.moodImpactColor(value: average))
+            
+            if isBest {
+                Image(systemName: "star.fill")
+                    .foregroundColor(.yellow)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.spacingMedium)
+        .background(.cardBackground)
+        .cornerRadius(12)
     }
 }
 
