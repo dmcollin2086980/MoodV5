@@ -257,7 +257,8 @@ struct GoalProgressRow: View {
             }
             
             if let impact = progress.impactOnMood {
-                Text("Mood Impact: \(impact > 0 ? \"+\" : \"\")\(String(format: "%.1f", impact))")
+                let impactText = impact > 0 ? "+" : ""
+                Text("Mood Impact: \(impactText)\(String(format: "%.1f", impact))")
                     .font(.caption)
                     .foregroundColor(impact > 0 ? .green : .red)
             }
@@ -278,7 +279,7 @@ struct GoalImpactCard: View {
             Text(correlation.goal.title)
                 .font(.body)
             
-            Text("Impact: \(correlation.impact == .positive ? \"Positive\" : \"Negative\")")
+            Text(correlation.impact == .positive ? "Impact: Positive" : "Impact: Negative")
                 .font(.caption)
                 .foregroundColor(correlation.impact == .positive ? .green : .red)
         }
