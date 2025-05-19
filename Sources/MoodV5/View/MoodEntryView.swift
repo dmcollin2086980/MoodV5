@@ -43,10 +43,10 @@ struct MoodEntryView: View {
                     // Tags Button
                     Button(action: { showingTags = true }) {
                         HStack {
-                            Text("Add Tags")
-                            Spacer()
                             Image(systemName: "tag")
+                            Text("Add Tags")
                         }
+                        .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
@@ -54,28 +54,26 @@ struct MoodEntryView: View {
                     .padding(.horizontal)
                     
                     // Save Button
-                    Button(action: viewModel.saveMood) {
-                        Text("Save Mood")
+                    Button(action: { viewModel.saveEntry() }) {
+                        Text("Save Entry")
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(viewModel.isSaveEnabled ? Color.blue : Color.gray)
+                            .background(viewModel.selectedMood != nil ? Color.blue : Color.gray)
                             .cornerRadius(12)
                     }
-                    .disabled(!viewModel.isSaveEnabled)
+                    .disabled(viewModel.selectedMood == nil)
                     .padding(.horizontal)
                 }
                 .padding(.vertical)
             }
-            .navigationTitle("How's your mood?")
+            .navigationTitle("How are you feeling?")
             .sheet(isPresented: $showingTags) {
                 TagSelectionView(selectedTags: $viewModel.selectedTags)
             }
-            .alert("Error", isPresented: .constant(viewModel.error != nil)) {
-                Button("OK") { viewModel.error = nil }
-            } message: {
-                Text(viewModel.error?.localizedDescription ?? "")
+            .withErrorAlert(error: $viewModel.error) {
+                viewModel.error = nil
             }
         }
     }

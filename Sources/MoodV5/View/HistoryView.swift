@@ -22,9 +22,25 @@ struct HistoryView: View {
                 .padding()
                 
                 if viewModel.entries.isEmpty {
-                    emptyStateView
+                    EmptyStateView(
+                        icon: "clock",
+                        title: "No Entries",
+                        message: "Your mood history will appear here",
+                        actionTitle: nil,
+                        action: nil
+                    )
                 } else {
-                    entriesList
+                    ScrollView {
+                        LazyVStack(spacing: 16) {
+                            ForEach(viewModel.entries) { entry in
+                                MoodEntryCard(entry: entry) {
+                                    entryToDelete = entry
+                                    showingDeleteAlert = true
+                                }
+                            }
+                        }
+                        .padding()
+                    }
                 }
             }
             .navigationTitle("Mood History")
@@ -41,87 +57,10 @@ struct HistoryView: View {
             } message: {
                 Text("Are you sure you want to delete this mood entry?")
             }
-            .alert("Error", isPresented: .constant(viewModel.error != nil)) {
-                Button("OK") { viewModel.error = nil }
-            } message: {
-                Text(viewModel.error?.localizedDescription ?? "")
+            .withErrorAlert(error: $viewModel.error) {
+                viewModel.error = nil
             }
         }
-    }
-    
-    private var emptyStateView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "calendar.badge.clock")
-                .font(.system(size: 60))
-                .foregroundColor(.gray)
-            
-            Text("No entries yet")
-                .font(.title2)
-                .foregroundColor(.gray)
-            
-            Text("Your mood history will appear here")
-                .font(.subheadline)
-                .foregroundColor(.gray)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemGroupedBackground))
-    }
-    
-    private var entriesList: some View {
-        List {
-            ForEach(viewModel.entries) { entry in
-                MoodEntryRow(entry: entry)
-                    .swipeActions(edge: .trailing) {
-                        Button(role: .destructive) {
-                            entryToDelete = entry
-                            showingDeleteAlert = true
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                    }
-            }
-        }
-        .listStyle(.insetGrouped)
-    }
-}
-
-struct MoodEntryRow: View {
-    let entry: MoodEntry
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(entry.moodType)
-                    .font(.headline)
-                Spacer()
-                Text(entry.date.formatted(date: .abbreviated, time: .shortened))
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-            }
-            
-            if let note = entry.note, !note.isEmpty {
-                Text(note)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-            
-            if !entry.tags.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(Array(entry.tags), id: \.self) { tag in
-                            Text(tag)
-                                .font(.caption)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.blue.opacity(0.1))
-                                .foregroundColor(.blue)
-                                .cornerRadius(8)
-                        }
-                    }
-                }
-            }
-        }
-        .padding(.vertical, 4)
     }
 }
 

@@ -14,7 +14,7 @@ struct ReportView: View {
         NavigationView {
             Group {
                 if viewModel.isLoading {
-                    ProgressView("Generating Report...")
+                    LoadingView(message: "Generating Report...")
                 } else if let report = viewModel.report {
                     ScrollView {
                         VStack(spacing: 20) {
@@ -24,148 +24,127 @@ struct ReportView: View {
                                 .foregroundColor(.secondary)
                             
                             // Mood Summary Card
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text("Mood Summary")
-                                    .font(.headline)
-                                
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        Text("Average Mood")
-                                            .font(.subheadline)
-                                            .foregroundColor(.secondary)
-                                        Text(String(format: "%.1f", report.averageMood))
-                                            .font(.title)
-                                            .foregroundColor(viewModel.averageMoodColor)
-                                    }
+                            CardView {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    Text("Mood Summary")
+                                        .font(.headline)
                                     
-                                    Spacer()
-                                    
-                                    VStack(alignment: .trailing) {
-                                        Text("Most Frequent")
-                                            .font(.subheadline)
-                                            .foregroundColor(.secondary)
-                                        Text(report.mostFrequentMood.rawValue)
-                                            .font(.title3)
+                                    HStack {
+                                        VStack(alignment: .leading) {
+                                            Text("Average Mood")
+                                                .font(.subheadline)
+                                                .foregroundColor(.secondary)
+                                            Text(String(format: "%.1f", report.averageMood))
+                                                .font(.title)
+                                                .foregroundColor(viewModel.averageMoodColor)
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        VStack(alignment: .trailing) {
+                                            Text("Most Frequent")
+                                                .font(.subheadline)
+                                                .foregroundColor(.secondary)
+                                            Text(report.mostFrequentMood.rawValue)
+                                                .font(.title3)
+                                        }
                                     }
                                 }
                             }
-                            .padding()
-                            .background(Color(.systemBackground))
-                            .cornerRadius(12)
-                            .shadow(radius: 2)
                             
                             // Time of Day Analysis
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text("Time of Day Analysis")
-                                    .font(.headline)
-                                
-                                HStack(spacing: 20) {
-                                    TimeOfDayCard(
-                                        title: "Morning",
-                                        average: report.moodTrends.timeOfDayAnalysis.morningAverage,
-                                        isBest: report.moodTrends.timeOfDayAnalysis.bestTimeOfDay == .morning
-                                    )
+                            CardView {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    Text("Time of Day Analysis")
+                                        .font(.headline)
                                     
-                                    TimeOfDayCard(
-                                        title: "Afternoon",
-                                        average: report.moodTrends.timeOfDayAnalysis.afternoonAverage,
-                                        isBest: report.moodTrends.timeOfDayAnalysis.bestTimeOfDay == .afternoon
-                                    )
-                                    
-                                    TimeOfDayCard(
-                                        title: "Evening",
-                                        average: report.moodTrends.timeOfDayAnalysis.eveningAverage,
-                                        isBest: report.moodTrends.timeOfDayAnalysis.bestTimeOfDay == .evening
-                                    )
+                                    HStack(spacing: 20) {
+                                        TimeOfDayCard(
+                                            title: "Morning",
+                                            average: report.moodTrends.timeOfDayAnalysis.morningAverage,
+                                            isBest: report.moodTrends.timeOfDayAnalysis.bestTimeOfDay == .morning
+                                        )
+                                        
+                                        TimeOfDayCard(
+                                            title: "Afternoon",
+                                            average: report.moodTrends.timeOfDayAnalysis.afternoonAverage,
+                                            isBest: report.moodTrends.timeOfDayAnalysis.bestTimeOfDay == .afternoon
+                                        )
+                                        
+                                        TimeOfDayCard(
+                                            title: "Evening",
+                                            average: report.moodTrends.timeOfDayAnalysis.eveningAverage,
+                                            isBest: report.moodTrends.timeOfDayAnalysis.bestTimeOfDay == .evening
+                                        )
+                                    }
                                 }
                             }
-                            .padding()
-                            .background(Color(.systemBackground))
-                            .cornerRadius(12)
-                            .shadow(radius: 2)
                             
                             // Mood Distribution Chart
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text("Mood Distribution")
-                                    .font(.headline)
-                                
-                                Chart(viewModel.moodDistributionData, id: \.0) { item in
-                                    BarMark(
-                                        x: .value("Count", item.1),
-                                        y: .value("Mood", item.0.rawValue)
-                                    )
-                                    .foregroundStyle(by: .value("Mood", item.0.rawValue))
+                            CardView {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    Text("Mood Distribution")
+                                        .font(.headline)
+                                    
+                                    MoodDistributionChart(data: viewModel.moodDistributionData)
                                 }
-                                .frame(height: 200)
                             }
-                            .padding()
-                            .background(Color(.systemBackground))
-                            .cornerRadius(12)
-                            .shadow(radius: 2)
                             
                             // Pattern Analysis
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text("Pattern Analysis")
-                                    .font(.headline)
-                                
-                                if let strongestPattern = report.patternAnalysis.recurringPatterns.max(by: { $0.confidence < $1.confidence }) {
-                                    PatternCard(pattern: strongestPattern)
-                                }
-                                
-                                if let strongestCorrelation = report.patternAnalysis.goalMoodCorrelations.max(by: { $0.correlation < $1.correlation }) {
-                                    GoalImpactCard(correlation: strongestCorrelation)
-                                }
-                                
-                                if let bestDay = report.patternAnalysis.weeklyPatterns.max(by: { $0.averageMood < $1.averageMood }) {
-                                    WeeklyPatternCard(pattern: bestDay)
+                            CardView {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    Text("Pattern Analysis")
+                                        .font(.headline)
+                                    
+                                    if let strongestPattern = report.patternAnalysis.recurringPatterns.max(by: { $0.confidence < $1.confidence }) {
+                                        PatternCard(pattern: strongestPattern)
+                                    }
+                                    
+                                    if let strongestCorrelation = report.patternAnalysis.goalMoodCorrelations.max(by: { $0.correlation < $1.correlation }) {
+                                        GoalImpactCard(correlation: strongestCorrelation)
+                                    }
+                                    
+                                    if let bestDay = report.patternAnalysis.weeklyPatterns.max(by: { $0.averageMood < $1.averageMood }) {
+                                        WeeklyPatternCard(pattern: bestDay)
+                                    }
                                 }
                             }
-                            .padding()
-                            .background(Color(.systemBackground))
-                            .cornerRadius(12)
-                            .shadow(radius: 2)
                             
                             // Goal Progress
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text("Goal Progress")
-                                    .font(.headline)
-                                
-                                ForEach(report.goalProgress, id: \.goal.id) { progress in
-                                    GoalProgressRow(progress: progress)
+                            CardView {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    Text("Goal Progress")
+                                        .font(.headline)
+                                    
+                                    ForEach(report.goalProgress, id: \.goal.id) { progress in
+                                        GoalProgressRow(progress: progress)
+                                    }
                                 }
                             }
-                            .padding()
-                            .background(Color(.systemBackground))
-                            .cornerRadius(12)
-                            .shadow(radius: 2)
                             
                             // Insights
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text("Insights")
-                                    .font(.headline)
-                                
-                                ForEach(report.insights, id: \.self) { insight in
-                                    InsightRow(text: insight)
+                            CardView {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    Text("Insights")
+                                        .font(.headline)
+                                    
+                                    ForEach(report.insights, id: \.self) { insight in
+                                        InsightRow(text: insight)
+                                    }
                                 }
                             }
-                            .padding()
-                            .background(Color(.systemBackground))
-                            .cornerRadius(12)
-                            .shadow(radius: 2)
                             
                             // Recommendations
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text("Recommendations")
-                                    .font(.headline)
-                                
-                                ForEach(report.recommendations, id: \.self) { recommendation in
-                                    RecommendationRow(text: recommendation)
+                            CardView {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    Text("Recommendations")
+                                        .font(.headline)
+                                    
+                                    ForEach(report.recommendations, id: \.self) { recommendation in
+                                        RecommendationRow(text: recommendation)
+                                    }
                                 }
                             }
-                            .padding()
-                            .background(Color(.systemBackground))
-                            .cornerRadius(12)
-                            .shadow(radius: 2)
                         }
                         .padding()
                     }
@@ -196,23 +175,17 @@ struct ReportView: View {
                     }
                 }
             }
-        }
-        .alert("Error", isPresented: .constant(viewModel.error != nil)) {
-            Button("OK") {
+            .withErrorAlert(error: $viewModel.error) {
                 viewModel.error = nil
             }
-        } message: {
-            if let error = viewModel.error {
-                Text(error.localizedDescription)
+            .sheet(isPresented: $viewModel.showingShareSheet) {
+                if let url = viewModel.shareURL {
+                    ShareSheet(activityItems: [url])
+                }
             }
-        }
-        .sheet(isPresented: $viewModel.showingShareSheet) {
-            if let url = viewModel.shareURL {
-                ShareSheet(activityItems: [url])
+            .onAppear {
+                viewModel.generateReport()
             }
-        }
-        .onAppear {
-            viewModel.generateReport()
         }
     }
 }
@@ -403,9 +376,8 @@ struct ShareSheet: UIViewControllerRepresentable {
 
 #Preview {
     ReportView(reportService: ReportService(
-        moodStore: MockMoodStore(),
-        goalStore: MockGoalStore(),
-        coachService: CoachService(moodStore: MockMoodStore())
+        moodStore: try! RealmMoodStore(),
+        goalStore: try! RealmGoalStore()
     ))
 }
 

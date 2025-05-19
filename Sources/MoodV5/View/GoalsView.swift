@@ -15,7 +15,13 @@ struct GoalsView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     if viewModel.goals.isEmpty {
-                        emptyStateView
+                        EmptyStateView(
+                            icon: "target",
+                            title: "No Goals Yet",
+                            message: "Set your first goal to start tracking your progress",
+                            actionTitle: "Create Goal",
+                            action: { showingNewGoalSheet = true }
+                        )
                     } else {
                         if !viewModel.overdueGoals.isEmpty {
                             overdueGoalsSection
@@ -62,40 +68,10 @@ struct GoalsView: View {
                     Text("Congratulations on completing '\(goal.title)'!")
                 }
             }
-            .alert("Error", isPresented: .constant(viewModel.error != nil)) {
-                Button("OK") { viewModel.error = nil }
-            } message: {
-                Text(viewModel.error?.localizedDescription ?? "")
+            .withErrorAlert(error: $viewModel.error) {
+                viewModel.error = nil
             }
         }
-    }
-    
-    private var emptyStateView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "target")
-                .font(.system(size: 60))
-                .foregroundColor(.gray)
-            
-            Text("No Goals Yet")
-                .font(.title2)
-                .foregroundColor(.gray)
-            
-            Text("Set your first goal to start tracking your progress")
-                .font(.subheadline)
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-            
-            Button(action: { showingNewGoalSheet = true }) {
-                Text("Create Goal")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(12)
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding()
     }
     
     private var overdueGoalsSection: some View {
@@ -106,17 +82,13 @@ struct GoalsView: View {
             
             ForEach(viewModel.overdueGoals) { goal in
                 GoalCard(goal: goal, viewModel: viewModel)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.red, lineWidth: 1)
-                    )
             }
         }
     }
     
     private var activeGoalsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Active Goals")
+            Text("Active")
                 .font(.headline)
             
             ForEach(viewModel.activeGoals) { goal in
@@ -133,10 +105,6 @@ struct GoalsView: View {
             
             ForEach(viewModel.completedGoals) { goal in
                 GoalCard(goal: goal, viewModel: viewModel)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.green, lineWidth: 1)
-                    )
             }
         }
     }
