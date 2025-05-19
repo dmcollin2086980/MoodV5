@@ -308,24 +308,25 @@ class DataExportService {
     
     private func importMoodEntries(_ entries: [ExportData.MoodEntryExport]) throws {
         for entry in entries {
-            let moodEntry = MoodEntry(
-                moodType: MoodType(rawValue: entry.moodType) ?? .okay,
-                note: entry.note.isEmpty ? nil : entry.note,
-                tags: []
-            )
+            let moodEntry = MoodEntry()
+            moodEntry.id = ObjectId(string: entry.id) ?? ObjectId.generate()
+            moodEntry.date = entry.date
+            moodEntry.moodType = entry.moodType
+            moodEntry.note = entry.note
             try moodStore.save(moodEntry)
         }
     }
     
     private func importGoals(_ goals: [ExportData.GoalExport]) throws {
         for goal in goals {
-            let newGoal = Goal(
-                title: goal.title,
-                goalDescription: goal.goalDescription,
-                frequency: GoalFrequency(rawValue: goal.frequency)!,
-                targetCount: goal.targetCount
-            )
+            let newGoal = Goal()
+            newGoal.id = ObjectId(string: goal.id) ?? ObjectId.generate()
+            newGoal.title = goal.title
+            newGoal.goalDescription = goal.goalDescription
+            newGoal.frequency = goal.frequency
+            newGoal.targetCount = goal.targetCount
             newGoal.currentCount = goal.currentCount
+            newGoal.startDate = goal.startDate
             newGoal.lastCompletedDate = goal.lastCompletedDate
             newGoal.isCompleted = goal.isCompleted
             try goalStore.save(newGoal)
