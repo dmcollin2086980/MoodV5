@@ -45,6 +45,7 @@ class Goal: Object, Identifiable {
     
     override init() {
         super.init()
+        self.description = ""
     }
     
     convenience init(title: String, description: String, frequency: GoalFrequency, targetCount: Int) {

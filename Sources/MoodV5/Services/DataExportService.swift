@@ -167,7 +167,10 @@ class DataExportService {
     
     private func parseCSV(_ data: Data) throws -> ExportData {
         guard let csvString = String(data: data, encoding: .utf8) else {
-            throw NSError(domain: "DataExportService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid CSV data"])
+            throw NSError(domain: "DataExportService", code: 1, userInfo: [
+                NSLocalizedDescriptionKey: "Invalid CSV data",
+                NSLocalizedFailureReasonErrorKey: "Failed to convert data to string"
+            ])
         }
         
         // Split the CSV into sections
@@ -204,7 +207,7 @@ class DataExportService {
                 id: components[0],
                 date: date,
                 moodType: components[2],
-                note: components[3]
+                note: components[3].isEmpty ? "" : components[3]
             )
             moodEntries.append(entry)
         }
@@ -226,7 +229,7 @@ class DataExportService {
             let goal = ExportData.GoalExport(
                 id: components[0],
                 title: components[1],
-                description: components[2],
+                description: components[2].isEmpty ? "" : components[2],
                 frequency: components[3],
                 targetCount: targetCount,
                 currentCount: currentCount,
@@ -250,7 +253,10 @@ class DataExportService {
               let notificationsEnabled = Bool(settingsComponents[3]),
               let weeklyReportEnabled = Bool(settingsComponents[4]),
               let autoBackupEnabled = Bool(settingsComponents[7]) else {
-            throw NSError(domain: "DataExportService", code: 6, userInfo: [NSLocalizedDescriptionKey: "Invalid settings data"])
+            throw NSError(domain: "DataExportService", code: 6, userInfo: [
+                NSLocalizedDescriptionKey: "Invalid settings data",
+                NSLocalizedFailureReasonErrorKey: "Failed to parse settings components"
+            ])
         }
         
         let reminderTime = settingsComponents[1].isEmpty ? nil : dateFormatter.date(from: settingsComponents[1])
