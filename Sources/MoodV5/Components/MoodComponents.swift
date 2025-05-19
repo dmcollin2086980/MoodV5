@@ -1,4 +1,5 @@
 import SwiftUI
+import Charts
 
 // MARK: - Mood Button
 struct MoodButton: View {
@@ -9,7 +10,7 @@ struct MoodButton: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: 8) {
-                Text(mood.emoji)
+                Text(mood.rawValue)
                     .font(.system(size: 40))
                 Text(mood.rawValue)
                     .font(.subheadline)
@@ -31,7 +32,7 @@ struct MoodEntryCard: View {
         CardView {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    Text(entry.moodType.emoji)
+                    Text(entry.moodType.rawValue)
                         .font(.title)
                     
                     VStack(alignment: .leading) {
@@ -66,12 +67,14 @@ struct MoodDistributionChart: View {
     let data: [(MoodType, Int)]
     
     var body: some View {
-        Chart(data, id: \.0) { item in
-            BarMark(
-                x: .value("Count", item.1),
-                y: .value("Mood", item.0.rawValue)
-            )
-            .foregroundStyle(by: .value("Mood", item.0.rawValue))
+        Chart {
+            ForEach(data, id: \.0) { mood, count in
+                BarMark(
+                    x: .value("Count", count),
+                    y: .value("Mood", mood.rawValue)
+                )
+                .foregroundStyle(by: .value("Mood", mood.rawValue))
+            }
         }
         .frame(height: 200)
     }
