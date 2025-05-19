@@ -103,9 +103,9 @@ class DataExportService {
         let exportData = ExportData(
             version: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0",
             exportDate: Date(),
-            moodEntries: moodStore.fetchAllEntries().map(ExportData.MoodEntryExport.init),
-            goals: goalStore.fetchAllGoals().map(ExportData.GoalExport.init),
-            settings: ExportData.UserSettingsExport(from: settingsStore.fetchSettings())
+            moodEntries: moodStore.fetchAllEntries().map(MoodEntryExport.init),
+            goals: goalStore.fetchAllGoals().map(GoalExport.init),
+            settings: UserSettingsExport(from: settingsStore.fetchSettings())
         )
         
         switch format {
@@ -204,7 +204,7 @@ class DataExportService {
             guard components.count >= 4,
                   let date = dateFormatter.date(from: components[1]) else { continue }
             
-            let entry = ExportData.MoodEntryExport(
+            let entry = MoodEntryExport(
                 id: components[0],
                 date: date,
                 moodType: components[2],
@@ -215,7 +215,7 @@ class DataExportService {
         
         // Parse goals
         let goalLines = sections[2].components(separatedBy: "\n")
-        var goals: [ExportData.GoalExport] = []
+        var goals: [GoalExport] = []
         
         for line in goalLines.dropFirst() { // Skip header
             let components = line.components(separatedBy: ",")
@@ -227,7 +227,7 @@ class DataExportService {
             
             let lastCompletedDate = components[7].isEmpty ? nil : dateFormatter.date(from: components[7])
             
-            let goal = ExportData.GoalExport(
+            let goal = GoalExport(
                 id: components[0],
                 title: components[1],
                 goalDescription: components[2],
@@ -263,7 +263,7 @@ class DataExportService {
         let reminderTime = settingsComponents[1].isEmpty ? nil : dateFormatter.date(from: settingsComponents[1])
         let lastBackupDate = settingsComponents[6].isEmpty ? nil : dateFormatter.date(from: settingsComponents[6])
         
-        let settings = ExportData.UserSettingsExport(
+        let settings = UserSettingsExport(
             reminderEnabled: reminderEnabled,
             reminderTime: reminderTime,
             darkModeEnabled: darkModeEnabled,
