@@ -79,27 +79,6 @@ struct MoodEntryView: View {
     }
 }
 
-struct MoodButton: View {
-    let mood: MoodType
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 8) {
-                Text(mood.emoji)
-                    .font(.system(size: 40))
-                Text(mood.rawValue)
-                    .font(.subheadline)
-            }
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(isSelected ? Color.blue.opacity(0.2) : Color(.systemGray6))
-            .cornerRadius(12)
-        }
-    }
-}
-
 struct TagSelectionView: View {
     @Binding var selectedTags: Set<String>
     @Environment(\.dismiss) private var dismiss

@@ -377,7 +377,8 @@ struct ShareSheet: UIViewControllerRepresentable {
 #Preview {
     ReportView(reportService: ReportService(
         moodStore: try! RealmMoodStore(),
-        goalStore: try! RealmGoalStore()
+        goalStore: try! RealmGoalStore(),
+        coachService: CoachService(moodStore: try! RealmMoodStore())
     ))
 }
 
