@@ -27,7 +27,7 @@ class RealmMoodStore: MoodStore {
         let entries = realm.objects(MoodEntry.self)
         entriesSubject.send(Array(entries))
         
-        let token = entries.observe { [weak self] changes in
+        _ = entries.observe { [weak self] changes in
             switch changes {
             case .initial(let entries):
                 self?.entriesSubject.send(Array(entries))

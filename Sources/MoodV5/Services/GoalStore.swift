@@ -27,7 +27,7 @@ class RealmGoalStore: GoalStore {
         let goals = realm.objects(Goal.self)
         goalsSubject.send(Array(goals))
         
-        let token = goals.observe { [weak self] changes in
+        _ = goals.observe { [weak self] changes in
             switch changes {
             case .initial(let goals):
                 self?.goalsSubject.send(Array(goals))

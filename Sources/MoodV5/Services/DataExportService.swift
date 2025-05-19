@@ -143,7 +143,8 @@ class DataExportService {
         csvString += "moodEntries\n"
         csvString += "id,date,moodType,note\n"
         for entry in data.moodEntries {
-            csvString += "\(entry.id),\(entry.date.formatted()),\(entry.moodType),\(entry.note)\n"
+            let noteStr = entry.note ?? ""
+            csvString += "\(entry.id),\(entry.date.formatted()),\(entry.moodType),\(noteStr)\n"
         }
         
         // Goals
@@ -309,7 +310,11 @@ class DataExportService {
     private func importMoodEntries(_ entries: [ExportData.MoodEntryExport]) throws {
         for entry in entries {
             let moodEntry = MoodEntry()
-            moodEntry.id = ObjectId(string: entry.id) ?? ObjectId.generate()
+            if let id = try? ObjectId(string: entry.id) {
+                moodEntry.id = id
+            } else {
+                moodEntry.id = ObjectId.generate()
+            }
             moodEntry.date = entry.date
             moodEntry.moodType = entry.moodType
             moodEntry.note = entry.note
@@ -320,7 +325,11 @@ class DataExportService {
     private func importGoals(_ goals: [ExportData.GoalExport]) throws {
         for goal in goals {
             let newGoal = Goal()
-            newGoal.id = ObjectId(string: goal.id) ?? ObjectId.generate()
+            if let id = try? ObjectId(string: goal.id) {
+                newGoal.id = id
+            } else {
+                newGoal.id = ObjectId.generate()
+            }
             newGoal.title = goal.title
             newGoal.goalDescription = goal.goalDescription
             newGoal.frequency = goal.frequency
