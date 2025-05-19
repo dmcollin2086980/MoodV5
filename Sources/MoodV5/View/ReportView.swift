@@ -1,5 +1,6 @@
 import SwiftUI
 import Charts
+import Combine
 
 struct ReportView: View {
     @StateObject private var viewModel: ReportViewModel
@@ -410,20 +411,21 @@ struct ShareSheet: UIViewControllerRepresentable {
 
 // Mock stores for preview
 class MockMoodStore: MoodStore {
-    func fetchEntries(from startDate: Date, to endDate: Date) -> [MoodEntry] {
-        return []
-    }
-    
-    func save(_ entry: MoodEntry) throws {}
-    func delete(entry: MoodEntry) throws {}
+    func save(_ moodEntry: MoodEntry) throws {}
     func fetchAllEntries() -> [MoodEntry] { return [] }
+    func fetchEntries(from startDate: Date, to endDate: Date) -> [MoodEntry] { return [] }
+    func delete(entry: MoodEntry) throws {}
+    var entriesPublisher: AnyPublisher<[MoodEntry], Never> {
+        Just([]).eraseToAnyPublisher()
+    }
 }
 
 class MockGoalStore: GoalStore {
-    func fetchAllGoals() -> [Goal] {
-        return []
-    }
-    
     func save(_ goal: Goal) throws {}
+    func fetchAllGoals() -> [Goal] { return [] }
     func delete(goal: Goal) throws {}
+    func update(_ goal: Goal) throws {}
+    var goalsPublisher: AnyPublisher<[Goal], Never> {
+        Just([]).eraseToAnyPublisher()
+    }
 } 

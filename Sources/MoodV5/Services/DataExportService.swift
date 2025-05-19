@@ -300,9 +300,9 @@ class DataExportService {
     private func importMoodEntries(_ entries: [ExportData.MoodEntryExport]) throws {
         for entry in entries {
             let moodEntry = MoodEntry(
-                date: entry.date,
-                moodType: entry.moodType,
-                note: entry.note
+                moodType: MoodType(rawValue: entry.moodType) ?? .okay,
+                note: entry.note.isEmpty ? nil : entry.note,
+                tags: []
             )
             try moodStore.save(moodEntry)
         }
@@ -324,15 +324,15 @@ class DataExportService {
     }
     
     private func importSettings(_ settings: ExportData.UserSettingsExport) throws {
-        let currentSettings = self.settingsStore.fetchSettings()
-        currentSettings.reminderEnabled = settings.reminderEnabled
-        currentSettings.reminderTime = settings.reminderTime
-        currentSettings.darkModeEnabled = settings.darkModeEnabled
-        currentSettings.notificationsEnabled = settings.notificationsEnabled
-        currentSettings.weeklyReportEnabled = settings.weeklyReportEnabled
-        currentSettings.defaultMoodNote = settings.defaultMoodNote
-        currentSettings.lastBackupDate = settings.lastBackupDate
-        currentSettings.autoBackupEnabled = settings.autoBackupEnabled
-        try self.settingsStore.update(currentSettings)
+        let newSettings = UserSettings()
+        newSettings.reminderEnabled = settings.reminderEnabled
+        newSettings.reminderTime = settings.reminderTime
+        newSettings.darkModeEnabled = settings.darkModeEnabled
+        newSettings.notificationsEnabled = settings.notificationsEnabled
+        newSettings.weeklyReportEnabled = settings.weeklyReportEnabled
+        newSettings.defaultMoodNote = settings.defaultMoodNote
+        newSettings.lastBackupDate = settings.lastBackupDate
+        newSettings.autoBackupEnabled = settings.autoBackupEnabled
+        try settingsStore.save(newSettings)
     }
 } 

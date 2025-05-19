@@ -16,10 +16,13 @@ enum GoalFrequency: String, CaseIterable, Codable {
 }
 
 class GoalCompletion: Object {
+    @Persisted(primaryKey: true) var id: ObjectId
     @Persisted var date: Date
     
     override init() {
         super.init()
+        self.id = ObjectId()
+        self.date = Date()
     }
     
     convenience init(date: Date) {
