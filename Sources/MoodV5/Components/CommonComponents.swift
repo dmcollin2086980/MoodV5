@@ -1,17 +1,18 @@
 import SwiftUI
+import ComponentStyles
 
 // MARK: - Loading View
 struct LoadingView: View {
     let message: String
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: .spacingExtraLarge) {
             ProgressView()
                 .scaleEffect(1.5)
             
             Text(message)
                 .font(.headline)
-                .foregroundColor(.secondary)
+                .foregroundColor(.secondaryText)
         }
         .frame(maxWidth: .infinity, minHeight: 200)
     }
@@ -27,10 +28,7 @@ struct CardView<Content: View>: View {
     
     var body: some View {
         content
-            .padding()
-            .background(Color(.systemBackground))
-            .cornerRadius(12)
-            .shadow(radius: 2)
+            .cardStyle()
     }
 }
 
@@ -74,7 +72,7 @@ struct EmptyStateView: View {
     }
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: .spacingExtraLarge) {
             Image(systemName: icon)
                 .font(.system(size: 60))
                 .foregroundColor(.gray)
@@ -111,20 +109,20 @@ struct PatternCard: View {
     let pattern: WeeklyReport.PatternAnalysis.RecurringPattern
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: .spacingSmall) {
             Text("Recurring Pattern")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(.secondaryText)
             
             Text(pattern.pattern)
                 .font(.body)
             
             Text("Confidence: \(Int(pattern.confidence * 100))%")
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(.secondaryText)
         }
-        .padding()
-        .background(Color.blue.opacity(0.1))
+        .padding(.spacingMedium)
+        .background(.patternCardBackground)
         .cornerRadius(8)
     }
 }
@@ -134,32 +132,32 @@ struct WeeklyPatternCard: View {
     let pattern: WeeklyReport.PatternAnalysis.WeeklyPattern
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: .spacingSmall) {
             Text("Best Day")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(.secondaryText)
             
             Text(Calendar.current.weekdaySymbols[pattern.dayOfWeek - 1])
                 .font(.body)
             
             Text("Average Mood: \(String(format: "%.1f", pattern.averageMood))")
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(.secondaryText)
             
             if !pattern.commonActivities.isEmpty {
                 Text("Common Activities:")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.secondaryText)
                 
                 ForEach(pattern.commonActivities.prefix(3), id: \.self) { activity in
                     Text("• \(activity)")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.secondaryText)
                 }
             }
         }
-        .padding()
-        .background(Color.green.opacity(0.1))
+        .padding(.spacingMedium)
+        .background(.weeklyPatternCardBackground)
         .cornerRadius(8)
     }
 }
@@ -204,11 +202,11 @@ struct TimeOfDayCard: View {
         VStack {
             Text(title)
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(.secondaryText)
             
             Text(String(format: "%.1f", average))
                 .font(.title2)
-                .foregroundColor(moodColor(for: average))
+                .foregroundColor(.moodImpactColor(value: average))
             
             if isBest {
                 Image(systemName: "star.fill")
@@ -216,19 +214,9 @@ struct TimeOfDayCard: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding()
-        .background(Color(.systemBackground))
+        .padding(.spacingMedium)
+        .background(.cardBackground)
         .cornerRadius(12)
-    }
-    
-    private func moodColor(for value: Double) -> Color {
-        if value >= 4.0 {
-            return .green
-        } else if value >= 3.0 {
-            return .yellow
-        } else {
-            return .red
-        }
     }
 }
 
@@ -237,30 +225,30 @@ struct GoalProgressRow: View {
     let progress: WeeklyReport.GoalProgress
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: .spacingSmall) {
             Text(progress.goal.title)
                 .font(.subheadline)
             
             HStack {
                 ProgressView(value: progress.completionRate)
-                    .tint(progress.completionRate >= 1.0 ? .green : .blue)
+                    .tint(progress.completionRate >= 1.0 ? .positive : .blue)
                 
                 Text("\(Int(progress.completionRate * 100))%")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.secondaryText)
             }
             
             if progress.streak > 0 {
                 Text("Current Streak: \(progress.streak) days")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.secondaryText)
             }
             
             if let impact = progress.impactOnMood {
                 let impactText = impact > 0 ? "+" : ""
                 Text("Mood Impact: \(impactText)\(String(format: "%.1f", impact))")
                     .font(.caption)
-                    .foregroundColor(impact > 0 ? .green : .red)
+                    .foregroundColor(impact > 0 ? .positive : .negative)
             }
         }
     }
@@ -271,20 +259,20 @@ struct GoalImpactCard: View {
     let correlation: WeeklyReport.PatternAnalysis.GoalMoodCorrelation
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: .spacingSmall) {
             Text("Goal Impact")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(.secondaryText)
             
             Text(correlation.goal.title)
                 .font(.body)
             
             Text(correlation.impact == .positive ? "Impact: Positive" : "Impact: Negative")
                 .font(.caption)
-                .foregroundColor(correlation.impact == .positive ? .green : .red)
+                .foregroundColor(correlation.impact == .positive ? .positive : .negative)
         }
-        .padding()
-        .background(Color.purple.opacity(0.1))
+        .padding(.spacingMedium)
+        .background(.goalImpactCardBackground)
         .cornerRadius(8)
     }
 }
