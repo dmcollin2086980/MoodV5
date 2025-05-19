@@ -34,7 +34,7 @@ class GoalCompletion: Object {
 class Goal: Object, Identifiable {
     @Persisted(primaryKey: true) var id: ObjectId
     @Persisted var title: String
-    @Persisted var description: String
+    @Persisted var goalDescription: String
     @Persisted var frequency: String
     @Persisted var targetCount: Int
     @Persisted var currentCount: Int
@@ -45,14 +45,14 @@ class Goal: Object, Identifiable {
     
     override init() {
         super.init()
-        self.description = ""
+        self.goalDescription = ""
     }
     
-    convenience init(title: String, description: String, frequency: GoalFrequency, targetCount: Int) {
+    convenience init(title: String, goalDescription: String, frequency: GoalFrequency, targetCount: Int) {
         self.init()
         self.id = ObjectId.generate()
         self.title = title
-        self.description = description
+        self.goalDescription = goalDescription
         self.frequency = frequency.rawValue
         self.targetCount = targetCount
         self.currentCount = 0

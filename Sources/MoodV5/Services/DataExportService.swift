@@ -44,7 +44,7 @@ struct ExportData: Codable {
     struct GoalExport: Codable {
         let id: String
         let title: String
-        let description: String
+        let goalDescription: String
         let frequency: String
         let targetCount: Int
         let currentCount: Int
@@ -55,7 +55,7 @@ struct ExportData: Codable {
         init(from goal: Goal) {
             self.id = goal.id.stringValue
             self.title = goal.title
-            self.description = goal.description
+            self.goalDescription = goal.goalDescription
             self.frequency = goal.frequency
             self.targetCount = goal.targetCount
             self.currentCount = goal.currentCount
@@ -229,7 +229,7 @@ class DataExportService {
             let goal = ExportData.GoalExport(
                 id: components[0],
                 title: components[1],
-                description: components[2].isEmpty ? "" : components[2],
+                goalDescription: components[2].isEmpty ? "" : components[2],
                 frequency: components[3],
                 targetCount: targetCount,
                 currentCount: currentCount,
