@@ -31,7 +31,7 @@ struct ExportData: Codable {
         let id: String
         let date: Date
         let moodType: String
-        let note: String
+        let note: String?
         
         init(from entry: MoodEntry) {
             self.id = entry.id.stringValue
@@ -322,7 +322,7 @@ class DataExportService {
             let newGoal = Goal(
                 title: goal.title,
                 goalDescription: goal.goalDescription,
-                frequency: GoalFrequency(rawValue: goal.frequency) ?? .daily,
+                frequency: GoalFrequency(rawValue: goal.frequency)!,
                 targetCount: goal.targetCount
             )
             newGoal.currentCount = goal.currentCount
