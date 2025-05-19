@@ -307,7 +307,7 @@ class DataExportService {
         }
     }
     
-    private func importMoodEntries(_ entries: [ExportData.MoodEntryExport]) throws {
+    private func importMoodEntries(_ entries: [MoodEntryExport]) throws {
         for entry in entries {
             let moodEntry = MoodEntry()
             do {
@@ -322,7 +322,7 @@ class DataExportService {
         }
     }
     
-    private func importGoals(_ goals: [ExportData.GoalExport]) throws {
+    private func importGoals(_ goals: [GoalExport]) throws {
         for goal in goals {
             let newGoal = Goal()
             do {
@@ -342,7 +342,7 @@ class DataExportService {
         }
     }
     
-    private func importSettings(_ settings: ExportData.UserSettingsExport) throws {
+    private func importSettings(_ settings: UserSettingsExport) throws {
         let newSettings = UserSettings()
         newSettings.reminderEnabled = settings.reminderEnabled
         newSettings.reminderTime = settings.reminderTime
