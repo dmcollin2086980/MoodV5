@@ -208,7 +208,7 @@ class DataExportService {
                 id: components[0],
                 date: date,
                 moodType: components[2],
-                note: components[3].isEmpty ? "" : components[3]
+                note: components[3].isEmpty ? nil : components[3]
             )
             moodEntries.append(entry)
         }
@@ -230,7 +230,7 @@ class DataExportService {
             let goal = ExportData.GoalExport(
                 id: components[0],
                 title: components[1],
-                goalDescription: components[2].isEmpty ? "" : components[2],
+                goalDescription: components[2].isEmpty ? nil : components[2],
                 frequency: components[3],
                 targetCount: targetCount,
                 currentCount: currentCount,
@@ -269,7 +269,7 @@ class DataExportService {
             darkModeEnabled: darkModeEnabled,
             notificationsEnabled: notificationsEnabled,
             weeklyReportEnabled: weeklyReportEnabled,
-            defaultMoodNote: settingsComponents[5],
+            defaultMoodNote: settingsComponents[5].isEmpty ? nil : settingsComponents[5],
             lastBackupDate: lastBackupDate,
             autoBackupEnabled: autoBackupEnabled
         )
