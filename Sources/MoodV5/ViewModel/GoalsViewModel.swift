@@ -25,8 +25,8 @@ class GoalsViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    func createGoal(title: String, description: String, frequency: GoalFrequency, targetCount: Int) {
-        let goal = Goal(title: title, description: description, frequency: frequency, targetCount: targetCount)
+    func createGoal(title: String, goalDescription: String, frequency: GoalFrequency, targetCount: Int) {
+        let goal = Goal(title: title, goalDescription: goalDescription, frequency: frequency, targetCount: targetCount)
         
         do {
             try goalStore.save(goal)
