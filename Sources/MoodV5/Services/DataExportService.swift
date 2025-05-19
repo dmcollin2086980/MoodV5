@@ -310,11 +310,7 @@ class DataExportService {
     private func importMoodEntries(_ entries: [ExportData.MoodEntryExport]) throws {
         for entry in entries {
             let moodEntry = MoodEntry()
-            if let id = try? ObjectId(string: entry.id) {
-                moodEntry.id = id
-            } else {
-                moodEntry.id = ObjectId.generate()
-            }
+            moodEntry.id = try? ObjectId(string: entry.id) ?? ObjectId.generate()
             moodEntry.date = entry.date
             moodEntry.moodType = entry.moodType
             moodEntry.note = entry.note
@@ -325,11 +321,7 @@ class DataExportService {
     private func importGoals(_ goals: [ExportData.GoalExport]) throws {
         for goal in goals {
             let newGoal = Goal()
-            if let id = try? ObjectId(string: goal.id) {
-                newGoal.id = id
-            } else {
-                newGoal.id = ObjectId.generate()
-            }
+            newGoal.id = try? ObjectId(string: goal.id) ?? ObjectId.generate()
             newGoal.title = goal.title
             newGoal.goalDescription = goal.goalDescription
             newGoal.frequency = goal.frequency
