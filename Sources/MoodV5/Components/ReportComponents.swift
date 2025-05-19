@@ -1,89 +1,59 @@
 import SwiftUI
 
-// MARK: - Pattern Card
-struct PatternCard: View {
-    let pattern: WeeklyReport.PatternAnalysis.RecurringPattern
+// MARK: - Report Specific Components
+struct ReportHeader: View {
+    let title: String
+    let subtitle: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text("Recurring Pattern")
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.largeTitle)
+                .fontWeight(.bold)
+            
+            Text(subtitle)
                 .font(.subheadline)
-                .foregroundColor(.secondary)
-            
-            Text(pattern.pattern)
-                .font(.body)
-            
-            Text("Confidence: \(Int(pattern.confidence * 100))%")
-                .font(.caption)
                 .foregroundColor(.secondary)
         }
         .padding()
-        .background(Color.blue.opacity(0.1))
-        .cornerRadius(8)
     }
 }
 
-// MARK: - Weekly Pattern Card
-struct WeeklyPatternCard: View {
-    let pattern: WeeklyReport.PatternAnalysis.WeeklyPattern
+struct ReportSummary: View {
+    let moodScore: Double
+    let goalProgress: Double
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text("Best Day")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            
-            Text(Calendar.current.weekdaySymbols[pattern.dayOfWeek - 1])
-                .font(.body)
-            
-            Text("Average Mood: \(String(format: "%.1f", pattern.averageMood))")
-                .font(.caption)
-                .foregroundColor(.secondary)
-            
-            if !pattern.commonActivities.isEmpty {
-                Text("Common Activities:")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+        HStack {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Mood Score")
+                    .font(.headline)
                 
-                ForEach(pattern.commonActivities.prefix(3), id: \.self) { activity in
-                    Text("• \(activity)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+                Text(String(format: "%.1f", moodScore))
+                    .font(.title)
+                    .foregroundColor(moodColor(for: moodScore))
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Goal Progress")
+                    .font(.headline)
+                
+                ProgressView(value: goalProgress)
+                    .tint(.blue)
             }
         }
         .padding()
-        .background(Color.green.opacity(0.1))
-        .cornerRadius(8)
     }
-}
-
-// MARK: - Insight Row
-struct InsightRow: View {
-    let text: String
     
-    var body: some View {
-        HStack(alignment: .top) {
-            Image(systemName: "lightbulb.fill")
-                .foregroundColor(.yellow)
-            
-            Text(text)
-                .font(.body)
-        }
-    }
-}
-
-// MARK: - Recommendation Row
-struct RecommendationRow: View {
-    let text: String
-    
-    var body: some View {
-        HStack(alignment: .top) {
-            Image(systemName: "checkmark.circle.fill")
-                .foregroundColor(.green)
-            
-            Text(text)
-                .font(.body)
+    private func moodColor(for value: Double) -> Color {
+        if value >= 4.0 {
+            return .green
+        } else if value >= 3.0 {
+            return .yellow
+        } else {
+            return .red
         }
     }
 } 

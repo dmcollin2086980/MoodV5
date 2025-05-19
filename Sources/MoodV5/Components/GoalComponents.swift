@@ -66,58 +66,21 @@ struct GoalCard: View {
     }
 }
 
-// MARK: - Goal Progress Row
-struct GoalProgressRow: View {
-    let progress: WeeklyReport.GoalProgress
+// MARK: - Goal List
+struct GoalList: View {
+    @ObservedObject var viewModel: GoalsViewModel
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text(progress.goal.title)
-                .font(.subheadline)
-            
-            HStack {
-                ProgressView(value: progress.completionRate)
-                    .tint(progress.completionRate >= 1.0 ? .green : .blue)
-                
-                Text("\(Int(progress.completionRate * 100))%")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+        List {
+            ForEach(viewModel.goals) { goal in
+                GoalCard(goal: goal, viewModel: viewModel)
             }
-            
-            if progress.streak > 0 {
-                Text("Current Streak: \(progress.streak) days")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            
-            if let impact = progress.impactOnMood {
-                Text("Mood Impact: \(impact > 0 ? "+" : "")\(String(format: "%.1f", impact))")
-                    .font(.caption)
-                    .foregroundColor(impact > 0 ? .green : .red)
+            .onDelete { indexSet in
+                indexSet.forEach { index in
+                    viewModel.deleteGoal(viewModel.goals[index])
+                }
             }
         }
+        .listStyle(.plain)
     }
 }
-
-// MARK: - Goal Impact Card
-struct GoalImpactCard: View {
-    let correlation: WeeklyReport.PatternAnalysis.GoalMoodCorrelation
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text("Goal Impact")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            
-            Text(correlation.goal.title)
-                .font(.body)
-            
-            Text("Impact: \(correlation.impact == .positive ? "Positive" : "Negative")")
-                .font(.caption)
-                .foregroundColor(correlation.impact == .positive ? .green : .red)
-        }
-        .padding()
-        .background(Color.purple.opacity(0.1))
-        .cornerRadius(8)
-    }
-} 

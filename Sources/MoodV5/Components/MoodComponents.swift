@@ -77,39 +77,18 @@ struct MoodDistributionChart: View {
     }
 }
 
-// MARK: - Time of Day Card
-struct TimeOfDayCard: View {
-    let title: String
-    let average: Double
-    let isBest: Bool
+// MARK: - Mood Timeline
+struct MoodTimeline: View {
+    let entries: [MoodEntry]
     
     var body: some View {
-        VStack {
-            Text(title)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            
-            Text(String(format: "%.1f", average))
-                .font(.title2)
-                .foregroundColor(moodColor(for: average))
-            
-            if isBest {
-                Image(systemName: "star.fill")
-                    .foregroundColor(.yellow)
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                ForEach(entries) { entry in
+                    MoodEntryCard(entry: entry, onDelete: {})
+                }
             }
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(isBest ? Color.yellow.opacity(0.1) : Color.clear)
-        .cornerRadius(8)
-    }
-    
-    private func moodColor(for value: Double) -> Color {
-        switch value {
-        case 0..<2: return .red
-        case 2..<3: return .orange
-        case 3..<4: return .yellow
-        default: return .green
+            .padding()
         }
     }
-} 
+}
