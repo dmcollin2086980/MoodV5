@@ -148,10 +148,10 @@ class DataExportService {
         
         // Goals
         csvString += "\ngoals\n"
-        csvString += "id,title,description,frequency,targetCount,currentCount,startDate,lastCompletedDate,isCompleted\n"
+        csvString += "id,title,goalDescription,frequency,targetCount,currentCount,startDate,lastCompletedDate,isCompleted\n"
         for goal in data.goals {
             let lastCompletedStr = goal.lastCompletedDate?.formatted() ?? ""
-            csvString += "\(goal.id),\(goal.title),\(goal.description),\(goal.frequency),\(goal.targetCount),\(goal.currentCount),\(goal.startDate.formatted()),\(lastCompletedStr),\(goal.isCompleted)\n"
+            csvString += "\(goal.id),\(goal.title),\(goal.goalDescription),\(goal.frequency),\(goal.targetCount),\(goal.currentCount),\(goal.startDate.formatted()),\(lastCompletedStr),\(goal.isCompleted)\n"
         }
         
         // Settings
@@ -300,6 +300,9 @@ class DataExportService {
             guard GoalFrequency(rawValue: goal.frequency) != nil else {
                 throw NSError(domain: "DataExportService", code: 5, userInfo: [NSLocalizedDescriptionKey: "Invalid goal frequency in import data"])
             }
+            if goal.goalDescription.isEmpty {
+                throw NSError(domain: "DataExportService", code: 7, userInfo: [NSLocalizedDescriptionKey: "Goal description cannot be empty"])
+            }
         }
     }
     
@@ -318,7 +321,7 @@ class DataExportService {
         for goal in goals {
             let newGoal = Goal(
                 title: goal.title,
-                description: goal.description,
+                goalDescription: goal.goalDescription,
                 frequency: GoalFrequency(rawValue: goal.frequency) ?? .daily,
                 targetCount: goal.targetCount
             )
