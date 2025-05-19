@@ -257,7 +257,7 @@ struct GoalProgressRow: View {
             }
             
             if let impact = progress.impactOnMood {
-                Text("Mood Impact: \(impact > 0 ? \"+\" : "\")\(String(format: "%.1f", impact))")
+                Text("Mood Impact: \(impact > 0 ? \"+\" : \"\")\(String(format: "%.1f", impact))")
                     .font(.caption)
                     .foregroundColor(impact > 0 ? .green : .red)
             }
