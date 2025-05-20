@@ -39,6 +39,13 @@ struct ExportData: Codable {
             self.moodType = entry.moodType
             self.note = entry.note
         }
+        
+        init(id: String, date: Date, moodType: String, note: String?) {
+            self.id = id
+            self.date = date
+            self.moodType = moodType
+            self.note = note
+        }
     }
     
     struct GoalExport: Codable {
@@ -63,6 +70,18 @@ struct ExportData: Codable {
             self.lastCompletedDate = goal.lastCompletedDate
             self.isCompleted = goal.isCompleted
         }
+        
+        init(id: String, title: String, goalDescription: String, frequency: String, targetCount: Int, currentCount: Int, startDate: Date, lastCompletedDate: Date?, isCompleted: Bool) {
+            self.id = id
+            self.title = title
+            self.goalDescription = goalDescription
+            self.frequency = frequency
+            self.targetCount = targetCount
+            self.currentCount = currentCount
+            self.startDate = startDate
+            self.lastCompletedDate = lastCompletedDate
+            self.isCompleted = isCompleted
+        }
     }
     
     struct UserSettingsExport: Codable {
@@ -84,6 +103,17 @@ struct ExportData: Codable {
             self.defaultMoodNote = settings.defaultMoodNote
             self.lastBackupDate = settings.lastBackupDate
             self.autoBackupEnabled = settings.autoBackupEnabled
+        }
+        
+        init(reminderEnabled: Bool, reminderTime: Date?, darkModeEnabled: Bool, notificationsEnabled: Bool, weeklyReportEnabled: Bool, defaultMoodNote: String, lastBackupDate: Date?, autoBackupEnabled: Bool) {
+            self.reminderEnabled = reminderEnabled
+            self.reminderTime = reminderTime
+            self.darkModeEnabled = darkModeEnabled
+            self.notificationsEnabled = notificationsEnabled
+            self.weeklyReportEnabled = weeklyReportEnabled
+            self.defaultMoodNote = defaultMoodNote
+            self.lastBackupDate = lastBackupDate
+            self.autoBackupEnabled = autoBackupEnabled
         }
     }
 }
