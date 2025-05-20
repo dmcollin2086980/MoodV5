@@ -20,72 +20,72 @@ enum ExportFormat {
     }
 }
 
-struct MoodEntryExport: Codable {
-    let id: String
-    let date: Date
-    let moodType: String
-    let note: String?
-    
-    init(from entry: MoodEntry) {
-        self.id = entry.id.stringValue
-        self.date = entry.date
-        self.moodType = entry.moodType
-        self.note = entry.note
-    }
-}
-
-struct GoalExport: Codable {
-    let id: String
-    let title: String
-    let goalDescription: String
-    let frequency: String
-    let targetCount: Int
-    let currentCount: Int
-    let startDate: Date
-    let lastCompletedDate: Date?
-    let isCompleted: Bool
-    
-    init(from goal: Goal) {
-        self.id = goal.id.stringValue
-        self.title = goal.title
-        self.goalDescription = goal.goalDescription
-        self.frequency = goal.frequency
-        self.targetCount = goal.targetCount
-        self.currentCount = goal.currentCount
-        self.startDate = goal.startDate
-        self.lastCompletedDate = goal.lastCompletedDate
-        self.isCompleted = goal.isCompleted
-    }
-}
-
-struct UserSettingsExport: Codable {
-    let reminderEnabled: Bool
-    let reminderTime: Date?
-    let darkModeEnabled: Bool
-    let notificationsEnabled: Bool
-    let weeklyReportEnabled: Bool
-    let defaultMoodNote: String
-    let lastBackupDate: Date?
-    let autoBackupEnabled: Bool
-    
-    init(from settings: UserSettings) {
-        self.reminderEnabled = settings.reminderEnabled
-        self.reminderTime = settings.reminderTime
-        self.darkModeEnabled = settings.darkModeEnabled
-        self.notificationsEnabled = settings.notificationsEnabled
-        self.weeklyReportEnabled = settings.weeklyReportEnabled
-        self.defaultMoodNote = settings.defaultMoodNote
-        self.lastBackupDate = settings.lastBackupDate
-        self.autoBackupEnabled = settings.autoBackupEnabled
-    }
-}
-
 struct ExportData: Codable {
     let version: String
     let exportDate: Date
     let moodEntries: [MoodEntryExport]
     let goals: [GoalExport]
     let settings: UserSettingsExport
+    
+    struct MoodEntryExport: Codable {
+        let id: String
+        let date: Date
+        let moodType: String
+        let note: String?
+        
+        init(from entry: MoodEntry) {
+            self.id = entry.id.stringValue
+            self.date = entry.date
+            self.moodType = entry.moodType
+            self.note = entry.note
+        }
+    }
+    
+    struct GoalExport: Codable {
+        let id: String
+        let title: String
+        let goalDescription: String
+        let frequency: String
+        let targetCount: Int
+        let currentCount: Int
+        let startDate: Date
+        let lastCompletedDate: Date?
+        let isCompleted: Bool
+        
+        init(from goal: Goal) {
+            self.id = goal.id.stringValue
+            self.title = goal.title
+            self.goalDescription = goal.goalDescription
+            self.frequency = goal.frequency
+            self.targetCount = goal.targetCount
+            self.currentCount = goal.currentCount
+            self.startDate = goal.startDate
+            self.lastCompletedDate = goal.lastCompletedDate
+            self.isCompleted = goal.isCompleted
+        }
+    }
+    
+    struct UserSettingsExport: Codable {
+        let reminderEnabled: Bool
+        let reminderTime: Date?
+        let darkModeEnabled: Bool
+        let notificationsEnabled: Bool
+        let weeklyReportEnabled: Bool
+        let defaultMoodNote: String
+        let lastBackupDate: Date?
+        let autoBackupEnabled: Bool
+        
+        init(from settings: UserSettings) {
+            self.reminderEnabled = settings.reminderEnabled
+            self.reminderTime = settings.reminderTime
+            self.darkModeEnabled = settings.darkModeEnabled
+            self.notificationsEnabled = settings.notificationsEnabled
+            self.weeklyReportEnabled = settings.weeklyReportEnabled
+            self.defaultMoodNote = settings.defaultMoodNote
+            self.lastBackupDate = settings.lastBackupDate
+            self.autoBackupEnabled = settings.autoBackupEnabled
+        }
+    }
 }
 
 class DataExportService {
@@ -103,9 +103,9 @@ class DataExportService {
         let exportData = ExportData(
             version: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0",
             exportDate: Date(),
-            moodEntries: moodStore.fetchAllEntries().map(MoodEntryExport.init),
-            goals: goalStore.fetchAllGoals().map(GoalExport.init),
-            settings: UserSettingsExport(from: settingsStore.fetchSettings())
+            moodEntries: moodStore.fetchAllEntries().map(ExportData.MoodEntryExport.init),
+            goals: goalStore.fetchAllGoals().map(ExportData.GoalExport.init),
+            settings: ExportData.UserSettingsExport(from: settingsStore.fetchSettings())
         )
         
         switch format {
@@ -204,7 +204,7 @@ class DataExportService {
             guard components.count >= 4,
                   let date = dateFormatter.date(from: components[1]) else { continue }
             
-            let entry = MoodEntryExport(
+            let entry = ExportData.MoodEntryExport(
                 id: components[0],
                 date: date,
                 moodType: components[2],
@@ -215,7 +215,7 @@ class DataExportService {
         
         // Parse goals
         let goalLines = sections[2].components(separatedBy: "\n")
-        var goals: [GoalExport] = []
+        var goals: [ExportData.GoalExport] = []
         
         for line in goalLines.dropFirst() { // Skip header
             let components = line.components(separatedBy: ",")
@@ -227,7 +227,7 @@ class DataExportService {
             
             let lastCompletedDate = components[7].isEmpty ? nil : dateFormatter.date(from: components[7])
             
-            let goal = GoalExport(
+            let goal = ExportData.GoalExport(
                 id: components[0],
                 title: components[1],
                 goalDescription: components[2],
@@ -263,7 +263,7 @@ class DataExportService {
         let reminderTime = settingsComponents[1].isEmpty ? nil : dateFormatter.date(from: settingsComponents[1])
         let lastBackupDate = settingsComponents[6].isEmpty ? nil : dateFormatter.date(from: settingsComponents[6])
         
-        let settings = UserSettingsExport(
+        let settings = ExportData.UserSettingsExport(
             reminderEnabled: reminderEnabled,
             reminderTime: reminderTime,
             darkModeEnabled: darkModeEnabled,
@@ -307,7 +307,7 @@ class DataExportService {
         }
     }
     
-    private func importMoodEntries(_ entries: [MoodEntryExport]) throws {
+    private func importMoodEntries(_ entries: [ExportData.MoodEntryExport]) throws {
         for entry in entries {
             let moodEntry = MoodEntry()
             do {
@@ -322,7 +322,7 @@ class DataExportService {
         }
     }
     
-    private func importGoals(_ goals: [GoalExport]) throws {
+    private func importGoals(_ goals: [ExportData.GoalExport]) throws {
         for goal in goals {
             let newGoal = Goal()
             do {
@@ -342,7 +342,7 @@ class DataExportService {
         }
     }
     
-    private func importSettings(_ settings: UserSettingsExport) throws {
+    private func importSettings(_ settings: ExportData.UserSettingsExport) throws {
         let newSettings = UserSettings()
         newSettings.reminderEnabled = settings.reminderEnabled
         newSettings.reminderTime = settings.reminderTime
