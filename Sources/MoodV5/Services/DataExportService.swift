@@ -299,7 +299,7 @@ class DataExportService {
             darkModeEnabled: darkModeEnabled,
             notificationsEnabled: notificationsEnabled,
             weeklyReportEnabled: weeklyReportEnabled,
-            defaultMoodNote: settingsComponents[5].isEmpty ? nil : settingsComponents[5],
+            defaultMoodNote: settingsComponents[5],
             lastBackupDate: lastBackupDate,
             autoBackupEnabled: autoBackupEnabled
         )
