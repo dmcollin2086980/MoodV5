@@ -49,7 +49,7 @@ struct GoalCard: View {
                     
                     Spacer()
                     
-                    Text(goal.frequency.rawValue)
+                    Text(goal.frequency)
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }

@@ -5,15 +5,25 @@ import SwiftUI
 extension Color {
     static let systemBackground = Color(.systemBackground)
     static let secondaryText = Color.secondary
-    static let cardBackground = Color(.systemBackground)
+    static let cardBackground = Color(.systemGray6)
     
     static let positive = Color.green
     static let negative = Color.red
     static let neutral = Color.yellow
     
-    static let patternCardBackground = Color.blue.opacity(0.1)
-    static let weeklyPatternCardBackground = Color.green.opacity(0.1)
-    static let goalImpactCardBackground = Color.purple.opacity(0.1)
+    static let patternCardBackground = Color(.systemGray6)
+    static let weeklyPatternCardBackground = Color(.systemGray6)
+    static let goalImpactCardBackground = Color(.systemGray6)
+    
+    static func moodImpactColor(value: Double) -> Color {
+        switch value {
+        case ..<2.0: return .red
+        case 2.0..<3.0: return .orange
+        case 3.0..<4.0: return .yellow
+        case 4.0..<5.0: return .green
+        default: return .blue
+        }
+    }
 }
 
 // MARK: - Font Constants
