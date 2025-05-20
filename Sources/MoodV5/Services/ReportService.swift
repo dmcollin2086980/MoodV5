@@ -461,13 +461,13 @@ class ReportService {
         let calendar = Calendar.current
         let days = calendar.dateComponents([.day], from: startDate, to: endDate).day ?? 0
         
-        switch goal.frequency {
-        case GoalFrequency.daily:
+        switch GoalFrequency(rawValue: goal.frequency) ?? .daily {
+        case .daily:
             return Double(goal.currentCount) / Double(days + 1)
-        case GoalFrequency.weekly:
-            return Double(goal.currentCount) / Double((days + 1) / 7)
-        case GoalFrequency.monthly:
-            return Double(goal.currentCount) / Double((days + 1) / 30)
+        case .weekly:
+            return Double(goal.currentCount) / Double(max(1, (days + 1) / 7))
+        case .monthly:
+            return Double(goal.currentCount) / Double(max(1, (days + 1) / 30))
         }
     }
     
