@@ -33,7 +33,7 @@ class RealmSettingsStore: SettingsStore {
             try? save(defaultSettings)
         }
         
-        let token = settings.observe { [weak self] changes in
+        observationToken = settings.observe { [weak self] changes in
             switch changes {
             case .initial(let settings):
                 if let first = settings.first {

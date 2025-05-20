@@ -263,7 +263,7 @@ class ReportService {
         
         // Group entries by day and time of day
         for entry in entries {
-            let day = calendar.startOfDay(for: entry.date)
+            _ = calendar.startOfDay(for: entry.date)
             let hour = calendar.component(.hour, from: entry.date)
             
             if let moodType = MoodType(rawValue: entry.moodType) {
@@ -279,17 +279,21 @@ class ReportService {
         }
         
         // Calculate daily averages
-        for day in stride(from: startDate, through: endDate, by: 86400) {
-            let dayStart = calendar.startOfDay(for: day)
-            let dayEntries = entries.filter { calendar.startOfDay(for: $0.date) == dayStart }
-            
-            if !dayEntries.isEmpty {
-                let average = dayEntries.compactMap { MoodType(rawValue: $0.moodType)?.rawValue }
-                    .compactMap { Int($0) }
-                    .map { Double($0) }
-                    .reduce(0, +) / Double(dayEntries.count)
-                dailyAverages.append((dayStart, average))
+        if #available(iOS 16, *) {
+            for day in stride(from: startDate, through: endDate, by: 86400) {
+                let dayStart = calendar.startOfDay(for: day)
+                let dayEntries = entries.filter { calendar.startOfDay(for: $0.date) == dayStart }
+                
+                if !dayEntries.isEmpty {
+                    let average = dayEntries.compactMap { MoodType(rawValue: $0.moodType)?.rawValue }
+                        .compactMap { Int($0) }
+                        .map { Double($0) }
+                        .reduce(0, +) / Double(dayEntries.count)
+                    dailyAverages.append((dayStart, average))
+                }
             }
+        } else {
+            // Fallback on earlier versions
         }
         
         // Calculate time of day averages
@@ -435,11 +439,11 @@ class ReportService {
         }
         
         let total = dailyAverages.count - 1
-        if sameCount >= total * 0.7 {
+        if sameCount >= total * Int(0.7) {
             return .stable
-        } else if increasingCount >= total * 0.6 {
+        } else if increasingCount >= total * Int(0.6) {
             return .improving
-        } else if decreasingCount >= total * 0.6 {
+        } else if decreasingCount >= total * Int(0.6) {
             return .declining
         } else {
             return .fluctuating
