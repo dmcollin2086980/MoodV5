@@ -84,9 +84,13 @@ struct DataExportView: View {
 }
 
 #Preview {
-    DataExportView(dataExportService: DataExportService(
-        moodStore: RealmMoodStore(),
-        goalStore: RealmGoalStore(),
-        settingsStore: RealmSettingsStore()
-    ))
+    do {
+        return DataExportView(dataExportService: DataExportService(
+            moodStore: try RealmMoodStore(),
+            goalStore: try RealmGoalStore(),
+            settingsStore: try RealmSettingsStore()
+        ))
+    } catch {
+        return Text("Failed to create preview: \(error.localizedDescription)")
+    }
 } 

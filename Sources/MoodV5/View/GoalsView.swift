@@ -145,7 +145,7 @@ struct NewGoalView: View {
                 trailing: Button("Save") {
                     viewModel.createGoal(
                         title: title,
-                        description: description,
+                        goalDescription: description,
                         frequency: frequency,
                         targetCount: targetCount
                     )

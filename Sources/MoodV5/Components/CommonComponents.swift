@@ -205,7 +205,7 @@ struct PatternCard: View {
                 .foregroundColor(.secondaryText)
         }
         .padding(.spacingMedium)
-        .background(.patternCardBackground)
+        .background(Color.patternCardBackground)
         .cornerRadius(8)
     }
 }
@@ -239,7 +239,7 @@ struct WeeklyPatternCard: View {
             }
         }
         .padding(.spacingMedium)
-        .background(.weeklyPatternCardBackground)
+        .background(Color.weeklyPatternCardBackground)
         .cornerRadius(8)
     }
 }
@@ -324,7 +324,7 @@ struct GoalImpactCard: View {
                 .foregroundColor(correlation.impact == .positive ? .positive : .negative)
         }
         .padding(.spacingMedium)
-        .background(.goalImpactCardBackground)
+        .background(Color.goalImpactCardBackground)
         .cornerRadius(8)
     }
 }
@@ -352,7 +352,7 @@ struct TimeOfDayCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.spacingMedium)
-        .background(.cardBackground)
+        .background(Color.cardBackground)
         .cornerRadius(12)
     }
 }
