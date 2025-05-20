@@ -12,6 +12,7 @@ protocol SettingsStore {
 class RealmSettingsStore: SettingsStore {
     private let realm: Realm
     private let settingsSubject = CurrentValueSubject<UserSettings, Never>(UserSettings())
+    private var observationToken: NotificationToken?
     
     var settingsPublisher: AnyPublisher<UserSettings, Never> {
         settingsSubject.eraseToAnyPublisher()
