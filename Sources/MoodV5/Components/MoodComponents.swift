@@ -10,7 +10,7 @@ struct MoodButton: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: 8) {
-                Text(mood.rawValue)
+                Text(mood.emoji)
                     .font(.system(size: 40))
                 Text(mood.rawValue)
                     .font(.subheadline)
@@ -32,11 +32,11 @@ struct MoodEntryCard: View {
         CardView {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    Text(entry.moodType.rawValue)
+                    Text(MoodType(rawValue: entry.moodType)?.emoji ?? "")
                         .font(.title)
                     
                     VStack(alignment: .leading) {
-                        Text(entry.moodType.rawValue)
+                        Text(entry.moodType)
                             .font(.headline)
                         
                         Text(entry.date.formatted(date: .abbreviated, time: .shortened))
@@ -63,6 +63,7 @@ struct MoodEntryCard: View {
 }
 
 // MARK: - Mood Distribution Chart
+@available(iOS 16.0, *)
 struct MoodDistributionChart: View {
     let data: [(MoodType, Int)]
     
