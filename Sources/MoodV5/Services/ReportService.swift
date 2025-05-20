@@ -156,13 +156,13 @@ class ReportService {
         for entry in entries {
             if let moodType = MoodType(rawValue: entry.moodType) {
                 moodDistribution[moodType, default: 0] += 1
-                totalMoodValue += moodType.rawValue
+                totalMoodValue += Int(moodType.rawValue) ?? 0
                 entryCount += 1
             }
         }
         
         let averageMood = entryCount > 0 ? Double(totalMoodValue) / Double(entryCount) : 0
-        let mostFrequentMood = moodDistribution.max(by: { $0.value < $1.value })?.key ?? .neutral
+        let mostFrequentMood = moodDistribution.max(by: { $0.value < $1.value })?.key ?? .okay
         
         return (moodDistribution, averageMood, mostFrequentMood)
     }
@@ -239,10 +239,10 @@ class ReportService {
             
             if let moodType = MoodType(rawValue: entry.moodType) {
                 if goalCompleted {
-                    moodSumWithGoal += Double(moodType.rawValue)
+                    moodSumWithGoal += Double(Int(moodType.rawValue) ?? 0)
                     countWithGoal += 1
                 } else {
-                    moodSumWithoutGoal += Double(moodType.rawValue)
+                    moodSumWithoutGoal += Double(Int(moodType.rawValue) ?? 0)
                     countWithoutGoal += 1
                 }
             }
@@ -274,7 +274,7 @@ class ReportService {
                 default: timeOfDay = .evening
                 }
                 
-                timeOfDayMoods[timeOfDay, default: []].append(Double(moodType.rawValue))
+                timeOfDayMoods[timeOfDay, default: []].append(Double(Int(moodType.rawValue) ?? 0))
             }
         }
         
@@ -285,6 +285,7 @@ class ReportService {
             
             if !dayEntries.isEmpty {
                 let average = dayEntries.compactMap { MoodType(rawValue: $0.moodType)?.rawValue }
+                    .compactMap { Int($0) }
                     .map { Double($0) }
                     .reduce(0, +) / Double(dayEntries.count)
                 dailyAverages.append((dayStart, average))
@@ -292,9 +293,9 @@ class ReportService {
         }
         
         // Calculate time of day averages
-        let morningAvg = timeOfDayMoods[.morning]?.reduce(0, +) ?? 0 / Double(timeOfDayMoods[.morning]?.count ?? 1)
-        let afternoonAvg = timeOfDayMoods[.afternoon]?.reduce(0, +) ?? 0 / Double(timeOfDayMoods[.afternoon]?.count ?? 1)
-        let eveningAvg = timeOfDayMoods[.evening]?.reduce(0, +) ?? 0 / Double(timeOfDayMoods[.evening]?.count ?? 1)
+        let morningAvg = (timeOfDayMoods[.morning]?.reduce(0, +) ?? 0) / Double(timeOfDayMoods[.morning]?.count ?? 1)
+        let afternoonAvg = (timeOfDayMoods[.afternoon]?.reduce(0, +) ?? 0) / Double(timeOfDayMoods[.afternoon]?.count ?? 1)
+        let eveningAvg = (timeOfDayMoods[.evening]?.reduce(0, +) ?? 0) / Double(timeOfDayMoods[.evening]?.count ?? 1)
         
         let timeOfDayAnalysis = WeeklyReport.MoodTrends.TimeOfDayAnalysis(
             morningAverage: morningAvg,
@@ -399,9 +400,9 @@ class ReportService {
             if let moodType = MoodType(rawValue: entry.moodType) {
                 let current = dayPatterns[weekday] ?? (0, 0, [])
                 dayPatterns[weekday] = (
-                    moodSum: current.moodSum + Double(moodType.rawValue),
+                    moodSum: current.moodSum + Double(Int(moodType.rawValue) ?? 0),
                     count: current.count + 1,
-                    activities: current.activities.union(entry.activities)
+                    activities: current.activities.union(entry.tags)
                 )
             }
         }
@@ -461,11 +462,11 @@ class ReportService {
         let days = calendar.dateComponents([.day], from: startDate, to: endDate).day ?? 0
         
         switch goal.frequency {
-        case .daily:
+        case GoalFrequency.daily:
             return Double(goal.currentCount) / Double(days + 1)
-        case .weekly:
+        case GoalFrequency.weekly:
             return Double(goal.currentCount) / Double((days + 1) / 7)
-        case .monthly:
+        case GoalFrequency.monthly:
             return Double(goal.currentCount) / Double((days + 1) / 30)
         }
     }
