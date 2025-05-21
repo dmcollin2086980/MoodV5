@@ -1,0 +1,33 @@
+name: MoodV5.1
+options:
+  bundleIdPrefix: com.yourdomain
+  deploymentTarget:
+    iOS: 15.0
+
+packages:
+  realm-swift:
+    url: https://github.com/realm/realm-swift.git
+    from: 10.45.0
+
+targets:
+  MoodV5.1:
+    type: application
+    platform: iOS
+    sources:
+      - MoodV5.1/Sources
+    settings:
+      base:
+        INFOPLIST_FILE: MoodV5.1/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourdomain.moodv51
+    dependencies:
+      - package: realm-swift
+    scheme:
+      testTargets:
+        - MoodV5.1Tests
+  MoodV5.1Tests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - MoodV5.1/Tests
+    dependencies:
+      - target: MoodV5.1 

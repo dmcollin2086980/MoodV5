@@ -1,5 +1,5 @@
 import XCTest
-@testable import MoodV5
+@testable import MoodV5_1
 
 final class ReportTests: XCTestCase {
     var moodStore: RealmMoodStore!

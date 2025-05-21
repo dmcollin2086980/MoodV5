@@ -1,9 +1,4 @@
-let startDateString = report.startDate.formatted(date: .abbreviated, time: .omitted)
-let endDateString = report.endDate.formatted(date: .abbreviated, time: .omitted)
-
-Text("\(startDateString) - \(endDateString)")
-    .font(.subheadline)
-    .foregroundColor(.secondary)import SwiftUI
+import SwiftUI
 
 struct MoodEntryView: View {
     @StateObject private var viewModel: MoodEntryViewModel
