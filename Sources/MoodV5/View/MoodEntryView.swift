@@ -54,7 +54,7 @@ struct MoodEntryView: View {
                     .padding(.horizontal)
                     
                     // Save Button
-                    Button(action: { viewModel.saveEntry() }) {
+                    Button(action: { viewModel.saveMood() }) {
                         Text("Save Entry")
                             .font(.headline)
                             .foregroundColor(.white)

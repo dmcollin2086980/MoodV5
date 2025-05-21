@@ -7,7 +7,7 @@ let package = Package(
         .iOS(.v15)
     ],
     products: [
-        .executable(
+        .library(
             name: "MoodV5",
             targets: ["MoodV5"]),
     ],
@@ -15,7 +15,7 @@ let package = Package(
         .package(url: "https://github.com/realm/realm-swift.git", from: "10.45.0")
     ],
     targets: [
-        .executableTarget(
+        .target(
             name: "MoodV5",
             dependencies: [
                 .product(name: "RealmSwift", package: "realm-swift")
